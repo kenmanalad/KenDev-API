@@ -6,14 +6,21 @@ const register = async (email,password,userType) => {
     try{
         const hashedPassword = await bcrypt.hash(password,10);
         console.log(hashedPassword);
-        User.create(
+        const created = await User.create(
             {
                 email, 
                 password: hashedPassword
             }
          );
+        if(created){
+            return true;
+        }
+        else{
+            return false;
+        }
     }catch(err){
-
+        console.error(err);
+        throw new Error("User creation failed");
     }
 }
 

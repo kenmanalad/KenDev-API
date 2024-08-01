@@ -7,10 +7,31 @@ import auth from "./routes/authentication/auth.js";
 import register from "./routes/authentication/register.js";
 import sequelize from './config/database.js';
 import "./utils/strategies/jwt-strategy.js";
+import { config } from "dotenv";
+import cors from 'cors';
 
+config();
 const app = express();
 
+//CORS CONFIGURATION
+const corsOptions = {
+  origin:"http://localhost:5173",
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials:true
+};
+
+app.use(cors(corsOptions));
+
+
 app.use(express.json());
+app.use(session({
+  secret: process.env.SECRET, 
+  resave: false,              
+  saveUninitialized: false,    
+  cookie: {
+      maxAge: 1000 * 60 * 60 * 24 
+  }
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(bodyParser.urlencoded({
