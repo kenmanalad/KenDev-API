@@ -9,6 +9,8 @@ import sequelize from './config/database.js';
 import "./utils/strategies/jwt-strategy.js";
 import { config } from "dotenv";
 import cors from 'cors';
+import googleAuthRouter from "./routes/authentication/google/google-auth.js";
+import googleAuthRequest from "./routes/authentication/google/google-auth-request.js";
 
 config();
 const app = express();
@@ -52,11 +54,14 @@ sequelize.sync()
 // GET 
 app.get("/",posts);
 app.get("/hello",posts);
+app.get("/g-auth",googleAuthRouter);
 
 
 // POST
 app.post("/login",auth);
 app.post("/register",register);
+app.post("/google-request",googleAuthRequest);
+
 
 app.listen(3030,() => console.log("Running Locally on 3030"));
 
