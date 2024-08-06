@@ -2,10 +2,10 @@ import User from "../../models/user.js";
 import bcrypt from "bcrypt"
 import login from "./login.js";
 
-const register = async (email,password,userType,authType) => {
+const register = async (email,password,userType,oauth) => {
 
     try{
-        if(authType){
+        if(oauth){
 
             const created = await User.findOrCreate(
                 {
@@ -14,10 +14,10 @@ const register = async (email,password,userType,authType) => {
             );
 
             if(!created){
-                throw new Error(`Problem occured while creating user for auth-type ${authType}`);
+                throw new Error(`Problem occured while creating user for oauth`);
             }
 
-            return created.id
+            return created[0].dataValues.id
         } else {
             const hashedPassword = await bcrypt.hash(password,10);
             

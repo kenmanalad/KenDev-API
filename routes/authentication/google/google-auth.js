@@ -1,7 +1,8 @@
 import express from "express";
 import { config } from "dotenv";
 import { OAuth2Client } from "google-auth-library";
-import { getUserData ,generateToken } from "../../../controllers/auth/google-auth.js";
+import { getUserData } from "../../../controllers/auth/social-networks/google-auth.js";
+import { generateToken } from "../../../controllers/auth/jwt/jwt-auth.js";
 import register from "../../../controllers/auth/register.js";
 
 
@@ -44,15 +45,17 @@ router.get("/g-auth", async(req,res)=>{
             userInfo.email,
             null,
             null,
-            "oauth"
+            true
         );
 
         let payload = {
             id: id
         };
 
+
         const token = generateToken(payload);
-        
+
+        console.log(token);
         res.cookie('token', token);
         
         res.redirect("http://127.0.0.1:5173/student-feed");
