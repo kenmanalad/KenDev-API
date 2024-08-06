@@ -2,6 +2,7 @@ import User from "../../models/user.js"
 import bcrypt from "bcrypt"
 import jwt from 'jsonwebtoken'
 import { config } from "dotenv"
+import { generateToken } from "./jwt/jwt-auth.js";
 
 config();
 const login = async (email, password) => {
@@ -11,13 +12,7 @@ const login = async (email, password) => {
         
         let payload = {id: findUser.id}
 
-        let token = jwt.sign(
-            payload,
-            process.env.SECRET,
-            {
-                expiresIn:'1d'
-            }
-        );
+        let token = generateToken(payload);
 
         if(!findUser){ 
             return {

@@ -11,7 +11,7 @@ import { config } from "dotenv";
 import cors from 'cors';
 import googleAuthRouter from "./routes/authentication/google/google-auth.js";
 import googleAuthRequest from "./routes/authentication/google/google-auth-request.js";
-
+import githubAuth from "./routes/authentication/github/github-auth.js";
 config();
 const app = express();
 
@@ -61,6 +61,7 @@ app.get("/g-auth",googleAuthRouter);
 app.post("/login",auth);
 app.post("/register",register);
 app.post("/google-request",googleAuthRequest);
+app.post("/getGithubUserData",githubAuth);
 
 
 app.listen(3030,() => console.log("Running Locally on 3030"));

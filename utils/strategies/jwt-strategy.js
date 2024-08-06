@@ -4,6 +4,8 @@ import User from "../../models/user.js";
 import passport from "passport";
 
 config();
+
+//JWT CONFIGURATION
 let opts = {}
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = process.env.SECRET;
@@ -20,11 +22,16 @@ export default passport.use(new Strategy(opts, async(jwt_payload, next)=> {
         );
 
         if (user) {
-        return next(null, user);
+            
+            return next(null, user);
+
         } else {
-        return next(null, false);
+            
+            return next(null, false);
+
         }
+
     }catch(err){
-        console.log(err);
+        console.error("Erro occured during jwt authentication. " + err);
     }
 }))

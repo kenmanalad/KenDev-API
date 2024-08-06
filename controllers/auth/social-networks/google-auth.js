@@ -16,14 +16,4 @@ export const getUserData = async (access_token)  => {
     }
 }
 
-export const generateToken= (id) => {
-    const token = jwt.sign(
-        id,
-        process.env.SECRET,
-        {
-            expiresIn:'1d'
-        }
-    );
 
-    return token;
-}
