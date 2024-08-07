@@ -1,13 +1,6 @@
 import { config } from "dotenv"
 
 config();
-export const githubAuthRequestURL = (req, res) => {
-    res.status(200).json(
-        {
-            url: `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}`
-        }
-    );    
-}
 
 export const getAccessToken = async (code) =>{
     try{
