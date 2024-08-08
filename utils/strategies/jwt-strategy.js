@@ -32,6 +32,6 @@ export default passport.use(new Strategy(opts, async(jwt_payload, next)=> {
         }
 
     }catch(err){
-        console.error("Erro occured during jwt authentication. " + err);
+        console.error("Error occured during jwt authentication. " + err);
     }
 }))

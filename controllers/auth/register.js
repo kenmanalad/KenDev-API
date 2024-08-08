@@ -7,21 +7,33 @@ const register = async (email,password,userType,oauth) => {
     try{
         if(oauth){
 
-            const created = await User.findOrCreate(
+            const existingUser = await User.findOne(
                 {
-                    where:{email: email}
+                    where: {email}
                 }
             );
 
-            if(!created){
-                throw new Error(`Problem occured while creating user for oauth`);
+            if(existingUser){
+                console.error("Email Address is already in used");
+                return false;
             }
 
-            return created[0].dataValues.id
+            const created = await User.create(
+                {
+                    email, 
+                    password: null
+                }
+             );
+            if(!created){
+                console.error("There is an issue in using your social network account");
+                return false;
+            }
+
+            return created.id
+            
         } else {
             const hashedPassword = await bcrypt.hash(password,10);
             
-            // console.log(hashedPassword);
 
             const created = await User.create(
                 {
