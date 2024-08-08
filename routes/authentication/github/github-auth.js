@@ -1,7 +1,6 @@
 import express from "express";
 import { config } from "dotenv";
 import passport from "passport";
-import { getAccessToken } from "../../../controllers/auth/social-networks/github-auth.js";
 import { getUserData } from "../../../controllers/auth/social-networks/github-auth.js";
 import { generateToken } from "../../../controllers/auth/jwt/jwt-auth.js";
 import register from "../../../controllers/auth/register.js";
@@ -20,6 +19,7 @@ router.post("/getGithubUserData", async (req, res) =>
     {
         const code = req.body.code;
 
+
         if(!code){
             return res.status(400).json(
                 {
@@ -30,9 +30,9 @@ router.post("/getGithubUserData", async (req, res) =>
 
         try{
 
-            const data = await getAccessToken(code);
+            const userData = await getUserData(code);
 
-            const userData = await getUserData(data.access_token);
+            console.log(userData);
 
             const customizedUsername = userData.login + userData.id;
 
@@ -42,6 +42,14 @@ router.post("/getGithubUserData", async (req, res) =>
                 null,
                 true
             );
+
+            if(!id){
+                res.status(400).json(
+                    {
+                        errMessage: "This email address is already in use. Please try a different one.",
+                    }
+                );
+            };
 
             const payload = {
                 id: id
@@ -62,7 +70,11 @@ router.post("/getGithubUserData", async (req, res) =>
             
 
         }catch(error){
-            console.error("Error occured during github authentication",error);
+            res.status(400).json(
+                {
+                    errMessage: "Unable to complete request. Please Try again later.",
+                }
+            );
         }
     }
 );
