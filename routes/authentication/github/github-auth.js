@@ -1,9 +1,11 @@
 import express from "express";
 import { config } from "dotenv";
 import passport from "passport";
-import { getUserData } from "../../../controllers/auth/social-networks/github-auth.js";
+import { getUserData, getAccessToken } from "../../../controllers/auth/social-networks/access-user-data.js";
 import { generateToken } from "../../../controllers/auth/jwt/jwt-auth.js";
 import register from "../../../controllers/auth/register.js";
+import { body, validationResult } from "express-validator";
+import URLSearchParams from "url-search-params";
 
 
 config();
@@ -15,38 +17,76 @@ router.use((req, res, next) => {
     next();
 });
 
-router.post("/getGithubUserData", async (req, res) => 
+router.post("/getGithubUserData", body('code').notEmpty(), async (req, res) => 
     {
-        const code = req.body.code;
 
+        const result = validationResult(req);
 
-        if(!code){
-            return res.status(400).json(
+        if (!result.isEmpty()) {
+            return res.status(500).json(
                 {
-                    errMessage: "Code parameter is missing"
+                    message: "Code parameter is missing",
+                    token: null,
+                    id: null
                 }
             );
         }
 
+        const code = req.body.code;
+
+        const params = new URLSearchParams({
+            client_id: process.env.GITHUB_CLIENT_ID,
+            client_secret:process.env.GITHUB_CLIENT_SECRET,
+            code: code
+        }).toString();
+        const contentType = {
+            "Accept":"application/json"
+        }
+
         try{
 
-            const userData = await getUserData(code);
+            const response = await getAccessToken(code,process.env.GITHUB_GET_ACCESS_TOKEN_URL,params,contentType);
 
-            console.log(userData);
+            console.log(response);
 
-            const customizedUsername = userData.login + userData.id;
+            if(!response.success){
+                return res.status(response.status).json(
+                    {
+                        message: response.message,
+                        token: token,
+                        id: id
+                    }
+                );
+            }
 
-            let id = await register(
-                userData.email ?? customizedUsername,
+            const userData = await getUserData(response.access_token,process.env.GITHUB_GET_USER_DATA_URL);
+
+            if(!userData.success){
+                return res.status(user.status).json(
+                    {
+                        messsage: user.message,
+                        token: null,
+                        id:null
+                    }
+                );
+            }
+
+
+            const customizedUsername = userData.data.login + userData.data.id;
+
+            let { success, id, message, status } = await register(
+                userData.data.email ?? customizedUsername,
                 null,
                 null,
-                true
+                "github"
             );
 
-            if(!id){
-                res.status(400).json(
+            if(!success){
+                return res.status(status).json(
                     {
-                        errMessage: "This email address is already in use. Please try a different one.",
+                        message: message,
+                        token: null,
+                        id: null
                     }
                 );
             };
@@ -59,8 +99,9 @@ router.post("/getGithubUserData", async (req, res) =>
 
             console.log(token);
             
-            res.status(200).json(
+            return res.status(201).json(
                 {
+                    message: "",
                     token:token,
                     id:id
                 }
@@ -70,9 +111,12 @@ router.post("/getGithubUserData", async (req, res) =>
             
 
         }catch(error){
-            res.status(400).json(
+            console.log(error);
+            return res.status(400).json(
                 {
-                    errMessage: "Unable to complete request. Please Try again later.",
+                    message: "Unable to complete request. Please Try again later.",
+                    token: null,
+                    id: null
                 }
             );
         }
