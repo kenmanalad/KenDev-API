@@ -10,29 +10,32 @@ export default router.post("/login", async(req, res) => {
     const {email, password} = req.body;
 
     try{
-        const {success, message, token} = await login(email,password);
+        const { id, token, message, status} = await login(email,password);
 
-        if(success){
-            res.status(200).json(
-                {
-                    message:message,
-                    token:token
-                }
-            );
-        }
-
-        else{
-            res.status(400).json(
-                {
-                    message:message,
-                    token: null
-                }
-            )
-        }
+        res.status(status).json(
+            {
+                id:id,
+                message:message,
+                token:token
+            }
+        );
 
     }catch(err){
 
-        res.status(400).json({"message": "Bad Credentials"});
+        if (err.name === 'SequelizeValidationError') {
+
+            console.error("Validation Error: Invalid input data.", err.errors);
+            res.status(401).json({"message": "Unable to process authentication request: Credentials are invalid."});
+
+        } else if (err.name === 'SequelizeDatabaseError') {
+            console.error("Database Error: There was an issue with the database operation.", err);
+            res.status(500).json({"message": "Unable to process authentication request: Server issue as of the moment."});
+        } else {
+
+            console.error("Unexpected Error: Failed to process registration.", err);
+            res.status(400).json({"message": "Unable to process authentication request. Please try again later."});
+
+        }
 
     }
 });

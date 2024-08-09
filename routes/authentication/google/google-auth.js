@@ -4,21 +4,27 @@ import { OAuth2Client } from "google-auth-library";
 import { getUserData } from "../../../controllers/auth/social-networks/google-auth.js";
 import { generateToken } from "../../../controllers/auth/jwt/jwt-auth.js";
 import register from "../../../controllers/auth/register.js";
+import { query, validationResult } from "express-validator";
 
 
 config();
 
 const router = express.Router();
 
-router.get("/g-auth", async(req,res)=>{
+router.get("/g-auth", query('code').notEmpty() ,async(req,res)=>{
 
     const code = req.query.code;
 
-    if(!code){
-        return res.status(400).json({
-            errMessage: "Code parameter is missing"
-        })
+    const result = validationResult(req);
+
+    if (!result.isEmpty()) {
+        return res.status(500).json(
+            {
+                message: "Code parameter is missing"
+            }
+        );
     }
+
     try{
 
         const redirectUrl = process.env.GOOGLE_REDIRECT_URL;
@@ -31,22 +37,28 @@ router.get("/g-auth", async(req,res)=>{
 
         const response = await oAuth2Client.getToken(code);
 
+        if(!response) throw new Error("Failed to complete authentication request: No Access Token received from API");
+
         await oAuth2Client.setCredentials(response.tokens);
 
         const user = oAuth2Client.credentials;
 
-        // console.log(user);
+        if(!user) throw new Error("Failed to complete authentication request: Credentials were not set properly");
 
-        const userInfo = await getUserData(user.access_token);
+        const userInfo  = await getUserData(user.access_token);
 
-        // console.log(userInfo.email);
+        if(!userInfo.success) throw new Error(userInfo.message);
 
-        const id = await register(
-            userInfo.email,
+        const { success,message, id} = await register(
+            userInfo.data.email,
             null,
             null,
-            true
+            "google"
         );
+
+        if(!success){
+            throw new Error(message);
+        }
 
         let payload = {
             id: id
@@ -54,15 +66,22 @@ router.get("/g-auth", async(req,res)=>{
 
 
         const token = generateToken(payload);
-
-        console.log(token);
+        
         res.cookie('token', token);
+
+        res.cookie("id",id)
         
         res.redirect("http://127.0.0.1:5173/student-feed");
 
     }catch(error){
 
         console.error("Error happened while authentication google account",error);
+
+        return res.status(400).json(
+            {
+                message: "Unable to process authentication request. Please try again later."
+            }
+        );
 
     }
 
