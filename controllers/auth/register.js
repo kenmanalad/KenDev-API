@@ -1,8 +1,9 @@
 import User from "../../models/user.js";
 import bcrypt from "bcrypt"
 import login from "./login.js";
+import Profile from "../../models/profile/profile.js";
 
-const register = async (email,password,userType,oauth) => {
+const register = async (email,password,oauth) => {
 
     try{
         if(oauth){
