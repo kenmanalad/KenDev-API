@@ -5,15 +5,17 @@ import register from "../../controllers/auth/register.js";
 
 const router = express.Router();
 export default router.post("/register", async (req, res) => {
-    const { email , password, userType} = req.body;
+    const { email , password} = req.body;
     console.log(email);
     try{
         const {success,message,status} = await register(email,password);
 
-        res.status(status).json({
-            success:success,
-            message:message
-        });
+        res.status(status).json(
+            {
+                success:success,
+                message:message
+            }
+        );
 
     }catch(e){
 

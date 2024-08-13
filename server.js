@@ -13,6 +13,8 @@ import googleAuthRouter from "./routes/authentication/google/google-auth.js";
 import googleAuthRequest from "./routes/authentication/google/google-auth-request.js";
 import githubAuth from "./routes/authentication/github/github-auth.js";
 import linkedInAuth from "./routes/authentication/linkedIn/linkedIn-auth.js";
+import Profile from "./models/profile/profile.js";
+import ProfileRegistration from "./routes/profile/profile.js"
 config();
 const app = express();
 
@@ -42,6 +44,8 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json())
 
+Profile.sync();
+
 // SYNC MODELS
 sequelize.sync()
   .then(() => {
@@ -64,6 +68,7 @@ app.post("/register",register);
 app.post("/google-request",googleAuthRequest);
 app.post("/getGithubUserData",githubAuth);
 app.post("/getLinkedInUserData",linkedInAuth);
+app.post("/profile-registration",ProfileRegistration)
 
 
 app.listen(3030,() => console.log("Running Locally on 3030"));

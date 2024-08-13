@@ -10,13 +10,14 @@ export default router.post("/login", async(req, res) => {
     const {email, password} = req.body;
 
     try{
-        const { id, token, message, status} = await login(email,password);
+        const { id, token, message, status,profile} = await login(email,password);
 
         res.status(status).json(
             {
                 id:id,
                 message:message,
-                token:token
+                token:token,
+                profile: profile
             }
         );
 
