@@ -5,11 +5,16 @@ import Profile from "../../models/profile/profile.js";
 const registerProfile = async(req, res) => {
 
     const {firstName, lastName, user_id} = req.body
+    
 
     try{
 
         //Retrieve user through id
         const user = await User.findByPk(user_id);
+
+        //req.file can be  null
+        //Users can have no profile pic
+        const imgUrl = req.file.destination + req.file.filename;
 
         if(!user){
             return res.status(401).json(
@@ -20,10 +25,11 @@ const registerProfile = async(req, res) => {
             );
         }
 
-        //Register profile details
+        // Register profile details
         const profile = await Profile.create({
             firstName,
-            lastName
+            lastName,
+            imgUrl
         });
 
         if(!profile){
@@ -55,7 +61,7 @@ const registerProfile = async(req, res) => {
             return res.status(401).json(
                 {
                     success:false,
-                    message:"Unable to process authentication request: Inputs are invalid.",
+                    message:"Unable to process registration request: Inputs are invalid.",
                 }
             );
 
@@ -66,7 +72,7 @@ const registerProfile = async(req, res) => {
                 {
                     success:false,
                     id: null,
-                    message:"Unable to process authentication request: Server has an issue as of the moment.",
+                    message:"Unable to process registration request: Server has an issue as of the moment.",
                     status: 500
                 }
             );
