@@ -52,7 +52,6 @@ router.get("/g-auth", query('code').notEmpty() ,async(req,res)=>{
         const { success,message, id} = await register(
             userInfo.data.email,
             null,
-            null,
             "google"
         );
 
