@@ -2,6 +2,7 @@ import User from "../../models/user.js";
 import bcrypt from "bcrypt"
 import login from "./login.js";
 import Profile from "../../models/profile/profile.js";
+import { capitilizeFirstLetter } from "../../utils/shared/stringUtils.js";
 
 const register = async (email,password,oauth) => {
 
@@ -14,7 +15,7 @@ const register = async (email,password,oauth) => {
                 }
             );
 
-            if(!created){
+            if(!created[1]){
                 console.error(`Error occured in user registration through ${oauth}`);
                 return {
                     success: false,
@@ -42,7 +43,7 @@ const register = async (email,password,oauth) => {
                 }
              );
 
-            if(!created){
+            if(!created.id){
                 console.error("Error occured in manual user registration");
                 return {
                     success: false,
@@ -65,10 +66,13 @@ const register = async (email,password,oauth) => {
         if (err.name === 'SequelizeValidationError') {
 
             console.error("Validation Error: Invalid input data.", err.errors);
+
+            const field = err.errors[0].path ?? "a credential"
+            
             return {
                 success:false,
                 id: null,
-                message:"Unable to process authentication request: Credentials are invalid.",
+                message:`${capitilizeFirstLetter(field)} is invalid. Please provide valid credentials.`,
                 status: 401
             };
 
@@ -78,17 +82,17 @@ const register = async (email,password,oauth) => {
             return {
                 success:false,
                 id: null,
-                message:"Unable to process authentication request: Email address is already registered.",
+                message:"Email address is already registered. Please provide another email address",
                 status: 401
             };
 
         } else if (err.name === 'SequelizeDatabaseError') {
 
-            console.error("Database Error: There was an issue with the database operation.", err);
+            console.error("Database Error: There was an issue with the database operation.", err.errors);
             return {
                 success:false,
                 id: null,
-                message:"Unable to process authentication request: Server has an issue as of the moment.",
+                message:"Server has an issue as of the moment. Please contact an agent for this issue",
                 status: 500
             };
 
@@ -98,7 +102,7 @@ const register = async (email,password,oauth) => {
             return {
                 success:false,
                 id: null,
-                message:"Unable to process authentication request. Please try again later.",
+                message:"There is an unexpected error. Please try again later.",
                 status: 400
             };
 

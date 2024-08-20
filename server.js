@@ -15,7 +15,10 @@ import githubAuth from "./routes/authentication/github/github-auth.js";
 import linkedInAuth from "./routes/authentication/linkedIn/linkedIn-auth.js";
 import Profile from "./models/profile/profile.js";
 import ProfileRegistration from "./routes/profile/profile.js"
+
+
 config();
+
 const app = express();
 
 //CORS CONFIGURATION
@@ -44,7 +47,6 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json())
 
-Profile.sync();
 
 // SYNC MODELS
 sequelize.sync()
