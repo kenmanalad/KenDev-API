@@ -77,7 +77,6 @@ router.post("/getGithubUserData", body('code').notEmpty(), async (req, res) =>
             let { success, id, message, status } = await register(
                 userData.data.email ?? customizedUsername,
                 null,
-                null,
                 "github"
             );
 
