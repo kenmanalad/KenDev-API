@@ -76,7 +76,6 @@ const linkedInAuth = async(req,res) => {
         const {success,id,message,status} = await register(
             user.data.email,
             null,
-            null,
             "linkedin"
         );
 

@@ -56,7 +56,8 @@ router.get("/g-auth", query('code').notEmpty() ,async(req,res)=>{
         );
 
         if(!success){
-            throw new Error(message);
+            res.cookie("message",message);
+            res.redirect("http://127.0.0.1:5173/sign-in")
         }
 
         let payload = {
@@ -68,7 +69,7 @@ router.get("/g-auth", query('code').notEmpty() ,async(req,res)=>{
         
         res.cookie('token', token);
 
-        res.cookie("id",id)
+        res.cookie("id",id);
         
         res.redirect("http://127.0.0.1:5173/student-feed");
 
