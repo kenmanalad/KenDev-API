@@ -15,12 +15,12 @@ const register = async (email,password,oauth) => {
                 }
             );
 
-            if(!created[1]){
+            if(!created){
                 console.error(`Error occured in user registration through ${oauth}`);
                 return {
                     success: false,
                     id: null,
-                    message: "Failed in processing registration request. Please Try again later.",
+                    message: `Profile registration through ${capitilizeFirstLetter(oauth)} has an issue. Please Try again later.`,
                     status: 500
                 }
             }
