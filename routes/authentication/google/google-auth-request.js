@@ -25,6 +25,8 @@ router.post("/google-request",async(req, res) => {
             redirectUrl
         );
     
+        console.log(oAuth2Client);
+        
         const authorizeURL = oAuth2Client.generateAuthUrl(
             {
                 access_type: "offline",
@@ -35,14 +37,32 @@ router.post("/google-request",async(req, res) => {
             }
         );
 
-        res.json(
+        if(!authorizeURL){
+            res.status(400).json(
+                {
+                    url: null,
+                    message:"Unable to redirect to Google Sign in Page. Please try again later"
+                }
+            );
+        }
+
+        res.status(200).json(
             {
-                url:authorizeURL
+                url:authorizeURL,
+                message:""
             }
         );
 
     } catch(error) {
+
         console.error("Error occured while requesting auth url",error);
+
+        res.status(400).json(
+            {
+                url: null,
+                message:"There is an unexpected issue/s that occured. Please contact an agent for assistance"
+            }
+        );
     }
 
 });
