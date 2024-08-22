@@ -1,12 +1,35 @@
 import User from "../../models/user.js";
 import Profile from "../../models/profile/profile.js";
+import { validationResult } from 'express-validator';
+
 
 
 const registerProfile = async(req, res) => {
 
-    const {firstName, lastName, user_id} = req.body
-    
+    //Only validates the required fields
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
 
+        return res.status(400).json(
+            {
+                success: false, 
+                message: errors.array() 
+            }
+        );
+        
+    }
+
+    const {
+        firstName, 
+        lastName, 
+        user_id, 
+        userType,
+        nonITCareer,
+        ITCareer,
+        school,
+        schoolYear
+    } = req.body
+    
     try{
 
         //Retrieve user through id
@@ -14,7 +37,8 @@ const registerProfile = async(req, res) => {
 
         //req.file can be  null
         //Users can have no profile pic
-        const imgUrl = req.file.destination + req.file.filename;
+        const imgUrl = req?.file?.destination + req?.file?.filename;
+        const profilePic = imgUrl ?? null;
 
         if(!user){
             return res.status(401).json(
@@ -29,7 +53,12 @@ const registerProfile = async(req, res) => {
         const profile = await Profile.create({
             firstName,
             lastName,
-            imgUrl
+            profilePic,
+            userType,
+            nonITCareer,
+            ITCareer,
+            school,
+            schoolYear
         });
 
         if(!profile){
@@ -49,7 +78,7 @@ const registerProfile = async(req, res) => {
         return res.status(200).json(
             {
                 success: true,
-                message: ""
+                message: "Successful Profile Registration"
             }
         )
 
@@ -61,7 +90,7 @@ const registerProfile = async(req, res) => {
             return res.status(401).json(
                 {
                     success:false,
-                    message:"Unable to process registration request: Inputs are invalid.",
+                    message:"Inputs are invalid. Kindly enter valid inputs",
                 }
             );
 
@@ -72,8 +101,7 @@ const registerProfile = async(req, res) => {
                 {
                     success:false,
                     id: null,
-                    message:"Unable to process registration request: Server has an issue as of the moment.",
-                    status: 500
+                    message:"Server has an issue as of the moment. Please try again later"
                 }
             );
 
@@ -84,8 +112,7 @@ const registerProfile = async(req, res) => {
                 {
                     success:false,
                     id: null,
-                    message:"Unable to process authentication request. Please try again later.",
-                    status: 400
+                    message:"There is an unexpected issue/s in our system. Please contact an agent for assistance.",
                 }
             );
 

@@ -19,6 +19,26 @@ const Profile = sequelize.define('Profile', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  userType: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  nonITCareer: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  ITCareer: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  school: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  schoolYear: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   
 }, {
   timestamps: true,

@@ -49,6 +49,7 @@ app.use(bodyParser.json())
 
 
 // SYNC MODELS
+//TEMPORARILY FORCING THE CHANGE FOR DEVELOPMENT
 sequelize.sync()
   .then(() => {
     console.log('Database connected and synchronized');
