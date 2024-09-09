@@ -13,8 +13,8 @@ import googleAuthRouter from "./routes/authentication/google/google-auth.js";
 import googleAuthRequest from "./routes/authentication/google/google-auth-request.js";
 import githubAuth from "./routes/authentication/github/github-auth.js";
 import linkedInAuth from "./routes/authentication/linkedIn/linkedIn-auth.js";
-import Profile from "./models/profile/profile.js";
-import ProfileRegistration from "./routes/profile/profile.js"
+import Profile from "./routes/profile/profile.js"
+import ProfileRegistration from "./routes/profile/profile-registration.js"
 
 
 config();
@@ -66,6 +66,7 @@ app.get("/g-auth",googleAuthRouter);
 
 
 // POST
+app.post("/profile",Profile);
 app.post("/login",auth);
 app.post("/register",register);
 app.post("/google-request",googleAuthRequest);
