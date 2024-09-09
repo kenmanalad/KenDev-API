@@ -4,8 +4,6 @@ const fetchProfile = async (req,res) => {
 
     const userId = req.body.user_id; 
 
-    console.log( req.body );
-
     if(!userId){
         res.status(400).json(
             {
@@ -19,8 +17,6 @@ const fetchProfile = async (req,res) => {
     try{
 
         const userDetails = await User.findByPk(userId);
-
-        console.log(userDetails);
 
 
         if(!userDetails){
