@@ -35,10 +35,13 @@ const registerProfile = async(req, res) => {
         //Retrieve user through id
         const user = await User.findByPk(user_id);
 
+        console.log(req?.file?.destination);
+
         //req.file can be  null
         //Users can have no profile pic
-        const imgUrl = req?.file?.destination + req?.file?.filename;
-        const profilePic = imgUrl ?? null;
+        const profilePic =   `/temp_upload/profile/${req?.file?.filename}`;
+        const  imgUrl = profilePic ?? null;
+
 
         if(!user){
             return res.status(401).json(
@@ -53,7 +56,7 @@ const registerProfile = async(req, res) => {
         const profile = await Profile.create({
             firstName,
             lastName,
-            profilePic,
+            imgUrl,
             userType,
             nonITCareer,
             ITCareer,

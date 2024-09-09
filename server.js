@@ -45,7 +45,8 @@ app.use(passport.session());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
-app.use(bodyParser.json())
+app.use(bodyParser.json());
+app.use('/temp_upload', express.static('C:\\Users\\user\\Documents\\My Web Sites\\KenDev\\api\\temp_upload'));
 
 
 // SYNC MODELS
