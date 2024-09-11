@@ -27,15 +27,14 @@ const registerProfile = async(req, res) => {
         nonITCareer,
         ITCareer,
         school,
-        schoolYear
+        schoolYear,
+        collegeProgram
     } = req.body
     
     try{
 
         //Retrieve user through id
         const user = await User.findByPk(user_id);
-
-        console.log(req?.file?.destination);
 
         //req.file can be  null
         //Users can have no profile pic
@@ -61,7 +60,8 @@ const registerProfile = async(req, res) => {
             nonITCareer,
             ITCareer,
             school,
-            schoolYear
+            schoolYear,
+            collegeProgram
         });
 
         if(!profile){
