@@ -14,8 +14,11 @@ import googleAuthRequest from "./routes/authentication/google/google-auth-reques
 import githubAuth from "./routes/authentication/github/github-auth.js";
 import linkedInAuth from "./routes/authentication/linkedIn/linkedIn-auth.js";
 import Profile from "./routes/profile/profile.js"
-import ProfileRegistration from "./routes/profile/profile-registration.js"
-
+import ProfileRegistration from "./routes/profile/profile-registration.js";
+import Course from "./models/courses/course.js";
+import CourseAPI from "./routes/course/course.js";
+import ChapterRegistration from "./routes/chapter/chapter.js";
+import QuizRegistration from "./routes/quiz/quiz.js"
 
 config();
 
@@ -64,6 +67,7 @@ sequelize.sync()
 app.get("/",posts);
 app.get("/hello",posts);
 app.get("/g-auth",googleAuthRouter);
+app.get("/fetch-course",CourseAPI);
 
 
 // POST
@@ -74,6 +78,9 @@ app.post("/google-request",googleAuthRequest);
 app.post("/getGithubUserData",githubAuth);
 app.post("/getLinkedInUserData",linkedInAuth);
 app.post("/profile-registration",ProfileRegistration)
+app.post(process.env.ADD_COURSE_ROUTE, CourseAPI);
+app.post(process.env.ADD_CHAPTER_ROUTE,ChapterRegistration);
+app.post(process.env.ADD_QUIZ_ROUTE,QuizRegistration);
 
 
 app.listen(3030,() => console.log("Running Locally on 3030"));

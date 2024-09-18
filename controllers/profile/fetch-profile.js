@@ -1,11 +1,12 @@
 import User from "../../models/user.js";
+import { QueryError } from "../../utils/shared/error-handlers/query-error.js";
 
 const fetchProfile = async (req,res) => {
 
     const userId = req.body.user_id; 
 
     if(!userId){
-        res.status(400).json(
+        return res.status(400).json(
             {
                 error: false,
                 profile: null,
@@ -20,7 +21,7 @@ const fetchProfile = async (req,res) => {
 
 
         if(!userDetails){
-            res.status(400).json(
+            return res.status(400).json(
                 {
                     success: false,
                     profile: null,
@@ -31,10 +32,9 @@ const fetchProfile = async (req,res) => {
 
         const profile = await userDetails.getProfile();
 
-        console.log(profile);
 
         if(!profile){
-            res.status(400).json(
+            return res.status(400).json(
                 {
                     success: false,
                     profile: null,
@@ -55,7 +55,9 @@ const fetchProfile = async (req,res) => {
 
 
     }catch(error){
-
+        // Returns appropriate error statuses and messages
+        // For different types of database-related errors
+        QueryError(error, res);
     }
 
     

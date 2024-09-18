@@ -29,7 +29,7 @@ const register = async (email,password,oauth) => {
                 success:true,
                 id: created[0].dataValues.id,
                 message: "",
-                status: 200
+                status: 201
             }
             
         } else {
@@ -57,7 +57,7 @@ const register = async (email,password,oauth) => {
                 success: true,
                 id: created.id,
                 message: "", 
-                status: 200
+                status: 201
             }
 
         }
