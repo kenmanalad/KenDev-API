@@ -1,6 +1,7 @@
 import User from "../../models/user.js";
 import Profile from "../../models/profile/profile.js";
 import { validationResult } from 'express-validator';
+import { QueryError } from "../../utils/shared/error-handlers/query-error.js";
 
 
 
@@ -78,7 +79,7 @@ const registerProfile = async(req, res) => {
         await user.save();
 
 
-        return res.status(200).json(
+        return res.status(201).json(
             {
                 success: true,
                 message: "Successful Profile Registration"
@@ -87,41 +88,9 @@ const registerProfile = async(req, res) => {
 
 
     }catch(err){
-        if (err.name === 'SequelizeValidationError') {
-
-            console.error("Validation Error: Invalid input data.", err.errors);
-            return res.status(401).json(
-                {
-                    success:false,
-                    message:"Inputs are invalid. Kindly enter valid inputs",
-                }
-            );
-
-        } else if (err.name === 'SequelizeDatabaseError') {
-
-            console.error("Database Error: There was an issue with the database operation.", err);
-            return res.status(500).json(
-                {
-                    success:false,
-                    id: null,
-                    message:"Server has an issue as of the moment. Please try again later"
-                }
-            );
-
-        } else {
-
-            console.error("Unexpected Error: Failed to process registration.", err);
-            return res.status(400).json(
-                {
-                    success:false,
-                    id: null,
-                    message:"There is an unexpected issue/s in our system. Please contact an agent for assistance.",
-                }
-            );
-
-        }
-        
-
+        // Returns appropriate error statuses and messages
+        // For different types of database-related errors
+        QueryError(err);
     }
 
 }
